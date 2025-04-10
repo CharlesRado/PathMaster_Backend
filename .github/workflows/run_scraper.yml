@@ -2,34 +2,32 @@ name: Run Fetch Articles Script
 
 on:
   schedule:
-    - cron: '0 8 * * *'  # Everyday at 8h UTC
-  workflow_dispatch:    # Manual launch from GitHub
+    - cron: '0 8 * * *'  # Every day at 8h UTC
+  workflow_dispatch:
 
 jobs:
   run-script:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Repository clone
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Python setup
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Dependencies installation
+      - name: Install dependencies
         run: pip install -r requirements.txt
 
       - name: Create Firebase credentials file
-        env:
-          FIREBASE_CREDENTIALS_JSON: ${{ secrets.FIREBASE_CREDENTIALS_JSON }}
         run: |
           mkdir -p config
-          echo "$FIREBASE_CREDENTIALS_JSON" | jq '.' > config/firebase.json
+          printf '%s' "${{ secrets.FIREBASE_CREDENTIALS_JSON }}" > config/firebase.json
 
-      - name: Execute Python script
+      - name: Run fetch script
         run: python fetch_articles.py
 
       - name: Finish
-        run: echo "Script executed !"
+        run: echo "✅ Done"
