@@ -25,7 +25,8 @@ jobs:
         env:
           FIREBASE_CREDENTIALS_JSON: ${{ secrets.FIREBASE_CREDENTIALS_JSON }}
         run: |
-          echo "$FIREBASE_CREDENTIALS_JSON" > config/firebase.json
+          mkdir -p config
+          echo "$FIREBASE_CREDENTIALS_JSON" > config/pathmaster-327b2-firebase-adminsdk-fbsvc-708e63f7c0.json
           python fetch_articles.py
 
       - name: Finish
