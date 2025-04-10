@@ -21,13 +21,15 @@ jobs:
       - name: Dependencies installation
         run: pip install -r requirements.txt
 
-      - name: Execute Python script
+      - name: Create Firebase credentials file
         env:
           FIREBASE_CREDENTIALS_JSON: ${{ secrets.FIREBASE_CREDENTIALS_JSON }}
         run: |
           mkdir -p config
           echo "$FIREBASE_CREDENTIALS_JSON" > config/firebase.json
-          python fetch_articles.py
+      
+      - name: Execute Python script
+        run: python fetch_articles.py
 
       - name: Finish
         run: echo "Script executed !"
