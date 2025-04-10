@@ -26,8 +26,8 @@ jobs:
           FIREBASE_CREDENTIALS_JSON: ${{ secrets.FIREBASE_CREDENTIALS_JSON }}
         run: |
           mkdir -p config
-          echo "$FIREBASE_CREDENTIALS_JSON" > config/firebase.json
-      
+          echo "$FIREBASE_CREDENTIALS_JSON" | jq '.' > config/firebase.json
+
       - name: Execute Python script
         run: python fetch_articles.py
 
