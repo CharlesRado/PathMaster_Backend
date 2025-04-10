@@ -9,7 +9,7 @@ import time
 # -------------------------- CONFIG --------------------------
 IEEE_API_KEY = "gzsxnqj5tmr3eb92x9w46rrw"
 SERP_API_KEY = "1ac29f85d1c0b690a683e756ddfca1d8874b0c817cd1648bf1072e7d0b2d809a"
-FIREBASE_JSON = "config/pathmaster-327b2-firebase-adminsdk-fbsvc-708e63f7c0.json"
+FIREBASE_JSON = "config/firebase.json"
 
 # -------------------------- FIREBASE INIT --------------------------
 cred = credentials.Certificate(FIREBASE_JSON)
