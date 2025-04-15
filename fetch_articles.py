@@ -96,6 +96,51 @@ def scrape_google_scholar():
             time.sleep(1)
     return all_articles
 
+# === MDPI SCRAPER ===
+def scrape_mdpi():
+    all_articles = []
+    for cat, keywords in CATEGORIES.items():
+        for kw in keywords:
+            # MDPI API requiert un paramètre de recherche formaté
+            query = f"{kw} LLM robotics"
+            # L'API MDPI est accessible sans clé API
+            url = f"https://www.mdpi.com/api/v1/search?query={query}&sort=relevance&page=1&view=abstract&limit=5"
+            
+            try:
+                res = requests.get(url)
+                if res.status_code != 200:
+                    print(f"Erreur MDPI API: {res.status_code} pour {query}")
+                    continue
+                    
+                data = res.json()
+                for item in data.get("results", []):
+                    abstract = item.get("abstract", "")
+                    if not abstract:
+                        continue  # Ignorer les articles sans résumé
+                        
+                    # Construction de l'URL du PDF
+                    pdf_url = ""
+                    if "doi" in item:
+                        doi = item.get("doi")
+                        pdf_url = f"https://www.mdpi.com/pdf/{doi}"
+                    
+                    # Création d'un article
+                    all_articles.append({
+                        "title": item.get("title", ""),
+                        "abstract": abstract,
+                        "url": item.get("url", ""),
+                        "pdf_url": pdf_url,
+                        "category": cat,
+                        "website": "MDPI"
+                    })
+                
+                time.sleep(1)  # Respecter les limites de taux
+            except Exception as e:
+                print(f"Erreur lors de la récupération des articles MDPI: {e}")
+                continue
+    
+    return all_articles
+
 # === FIRESTORE UPLOAD ===
 def upload_to_firestore(articles):
     for art in articles:
