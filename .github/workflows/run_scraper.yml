@@ -1,33 +1,32 @@
-name: Run Fetch Articles Script
+name: Update Articles
 
 on:
   schedule:
-    - cron: '0 8 * * *'  # Every day at 8h UTC
-  workflow_dispatch:
+    - cron: '0 0 * * *'  # Exécuter tous les jours à minuit UTC
+  workflow_dispatch:     # Permet l'exécution manuelle
 
 jobs:
-  run-script:
+  fetch-articles:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
+      - uses: actions/checkout@v2
+      
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
-
+          python-version: '3.9'
+          
       - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Create Firebase credentials file
         run: |
-          mkdir -p config
-          printf '%s' "${{ secrets.FIREBASE_CREDENTIALS_JSON }}" | base64 -d > config/firebase.json
-
-      - name: Run fetch script
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      - name: Create config directory
+        run: mkdir -p config
+        
+      - name: Set up Firebase credentials
+        run: |
+          echo "${{ secrets.FIREBASE_CREDENTIALS_BASE64 }}" | base64 -d > config/firebase_credentials.json
+          
+      - name: Run script
         run: python fetch_articles.py
-
-      - name: Finish
-        run: echo "✅ Done"
